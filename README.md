@@ -22,7 +22,7 @@ This repository contains an analysis of **large-scale ImmGen transcriptomic data
 To run the analyses, ensure you have **R** and the following packages installed:
 
 ```r
-install.packages(c("ggplot2", "stats", "umap", "hrbrthemes", "RColorBrewer"))
+install.packages(c("ggplot2", "data.table", "stats", "umap", "hrbrthemes", "RColorBrewer"))
 ```
 
 ## Results & Insights
