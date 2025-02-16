@@ -1,0 +1,84 @@
+# Load necessary libraries
+library(ggplot2)
+library(data.table)  
+library(stats)
+library(hrbrthemes)  
+library(viridis)     
+library(ggrepel)     
+library(umap)       
+library(RColorBrewer)  # Same color scheme as PCA plots
+
+# -----------------------------
+# Load Gene Expression Data
+# -----------------------------
+file_path <- "/Users/hassan/Desktop/Assignments/IL181.007/ASM 1/GSE122108_Gene_count_table.csv"
+data <- read.csv(file_path, sep = "\t", header = TRUE)
+
+# Set the gene symbols as row names and remove the first column
+rownames(data) <- data$gene_symbol
+data <- data[, -1]  # Remove the gene_symbol column
+
+# Convert to numeric
+data <- as.matrix(data)
+data <- apply(data, 2, as.numeric)
+
+# Remove genes with zero variance across samples
+gene_variances <- apply(data, 1, var)
+data <- data[gene_variances > 0, ]
+
+# -----------------------------
+# Perform UMAP (Samples as Rows)
+# -----------------------------
+umap_result <- umap(t(data))
+
+# Create a data frame for UMAP visualization
+umap_df <- data.frame(UMAP1 = umap_result$layout[, 1],
+                      UMAP2 = umap_result$layout[, 2],
+                      Sample = rownames(umap_result$layout))
+
+# -----------------------------
+# Extract Tissue Types from Metadata File
+# -----------------------------
+meta_file <- "/Users/hassan/Desktop/Assignments/IL181.007/ASM 1/GSE122108_series_matrix.txt"
+
+# Read metadata and extract lines containing "!Sample_source_name_ch1"
+metadata_lines <- readLines(meta_file)
+tissue_line <- metadata_lines[grep("!Sample_source_name_ch1", metadata_lines)]
+
+# Extract tissue names from the line (splitting on tab and removing header)
+tissue_types <- gsub("\"", "", unlist(strsplit(tissue_line, "\t"))[-1])  # Remove quotes if present
+
+# Rename "Cell (Embryonic Body)" to "Embryoid body"
+tissue_types <- gsub("Cell \\(Embryonic Body\\)", "Embryoid body", tissue_types)
+
+# Remove "Epithelial Cell"
+keep_indices <- tissue_types != "Epithelial Cell"
+tissue_types <- tissue_types[keep_indices]
+umap_df <- umap_df[keep_indices, ]
+
+# Ensure tissue metadata matches sample count
+if (length(tissue_types) != nrow(umap_df)) {
+    stop("Tissue metadata and UMAP sample count mismatch! Ensure correct extraction.")
+}
+
+# Add tissue information to UMAP dataframe
+umap_df$Tissue <- as.factor(tissue_types)
+
+# -----------------------------
+# Plot UMAP Colored by Tissue Type)
+# -----------------------------
+ggplot(umap_df, aes(x = UMAP1, y = UMAP2, color = Tissue)) +
+  geom_point(size = 2.5, alpha = 0.85, shape = 16) +  # Adjusted point size and transparency
+  scale_color_manual(values = color_palette) +  # Consistent color scheme
+  labs(title = "UMAP of Gene Expression Data (Colored by Tissue Type)",
+       x = "UMAP1",
+       y = "UMAP2",
+       color = "Tissue") +
+  theme_minimal(base_size = 14) +  # Readable theme
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    legend.position = "right",
+    legend.key.size = unit(0.6, "cm"),  # Compact legend
+    legend.text = element_text(size = 12)  
+  )
+
