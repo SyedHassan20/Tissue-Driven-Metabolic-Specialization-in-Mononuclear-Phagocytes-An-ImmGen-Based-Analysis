@@ -94,7 +94,7 @@ message("Unique Cell Types Extracted:")
 cat(unique(pca_df$CellType), sep = "\n")
 
 # -----------------------------
-# Improved Color Selection (Matching Tissue PCA)
+#  Matching Tissue PCA
 # -----------------------------
 
 # Define the number of unique cell types
