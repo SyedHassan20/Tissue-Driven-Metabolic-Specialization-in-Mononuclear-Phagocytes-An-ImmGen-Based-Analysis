@@ -1,7 +1,7 @@
 # Tissue-Driven-Metabolic-Specialization-in-Mononuclear-Phagocytes-An-ImmGen-Based-Analysis
 
 ## Overview
-This repository contains an analysis of **large-scale ImmGen transcriptomic data** focusing on **mononuclear phagocytes (MNPs)** across various **tissues and cell types**. The project applies **Principal Component Analysis (PCA) and Uniform Manifold Approximation and Projection (UMAP)** to investigate how tissue environments shape immune cell metabolism.
+This repository contains a replication analysis of **large-scale ImmGen transcriptomic data** focusing on **mononuclear phagocytes (MNPs)** across various **tissues and cell types**. The project applies **Principal Component Analysis (PCA) and Uniform Manifold Approximation and Projection (UMAP)** to investigate how tissue environments shape immune cell metabolism.
 
 ## Key Features
 - **PCA and UMAP visualizations** for both **cell types** (dendritic cells, macrophages, monocytes, microglia) and **tissue types** (e.g., liver, lung, brain, spleen).
